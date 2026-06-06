@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bootstrap Example – Mini Landing Page</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"/>
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"/>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+    :root {
+      --primary: #1d4ed8;
+      --primary-light: #eff6ff;
+      --dark:    #0f172a;
+      --muted:   #64748b;
+      --surface: #f8fafc;
+      --border:  #e2e8f0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      color: var(--dark);
+      background: #fff;
+    }
+
+    /* ── Navbar ──────────────────────────── */
+    .navbar {
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.95) !important;
+      backdrop-filter: blur(6px);
+    }
+
+    .navbar-brand {
+      font-family: 'Lora', serif;
+      font-weight: 600;
+      font-style: italic;
+      color: var(--primary) !important;
+      font-size: 1.3rem;
+    }
+
+    .nav-link { color: var(--muted) !important; font-size: 0.88rem; }
+    .nav-link:hover { color: var(--dark) !important; }
+
+    .btn-nav {
+      font-size: 0.82rem;
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+    }
+
+    /* ── Hero ────────────────────────────── */
+    .hero {
+      padding: 6rem 0 5rem;
+      background: linear-gradient(160deg, #f0f9ff 0%, #fff 55%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--dark);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 em { color: var(--primary); font-style: normal; }
+
+    .hero p.lead {
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+
+    .hero-actions { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+    .hero-image-area {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      height: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .hero-image-area i { font-size: 2.5rem; color: var(--border); }
+
+    /* ── Stats strip ─────────────────────── */
+    .stats-strip {
+      padding: 2.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-item { text-align: center; padding: 0.5rem; }
+
+    .stat-item .num {
+      font-family: 'Lora', serif;
+      font-size: 2.4rem;
+      font-weight: 600;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .stat-item .lbl {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    /* ── Features grid ───────────────────── */
+    .features { padding: 5rem 0; }
+
+    .section-header { margin-bottom: 3rem; }
+    .section-header .eyebrow {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    .section-header h2 {
+      font-family: 'Lora', serif;
+      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .feature-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      height: 100%;
+      transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+      background: #fff;
+    }
+
+    .feature-card:hover {
+      box-shadow: 0 8px 30px rgba(29,78,216,0.08);
+      transform: translateY(-3px);
+      border-color: #bfdbfe;
+    }
+
+    .feature-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .feature-card h5 {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* ── Pricing ─────────────────────────── */
+    .pricing { padding: 5rem 0; background: var(--surface); }
+
+    .price-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      background: #fff;
+      height: 100%;
+    }
+
+    .price-card.featured {
+      border-color: var(--primary);
+      position: relative;
+      box-shadow: 0 4px 30px rgba(29,78,216,0.12);
+    }
+
+    .price-badge {
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.9rem;
+      border-radius: 100px;
+    }
+
+    .price-name { font-weight: 600; font-size: 0.9rem; color: var(--muted); }
+    .price-amount { font-family: 'Lora', serif; font-size: 2.75rem; font-weight: 600; line-height: 1.1; }
+    .price-period { font-size: 0.8rem; color: var(--muted); }
+
+    .price-features {
+      list-style: none;
+      padding: 0;
+      margin: 1.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .price-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .price-features li i { color: var(--primary); font-size: 0.9rem; }
+
+  
+
+    /* ── Footer ──────────────────────────── */
+    footer {
+      padding: 2rem 0;
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* ── Utility adjustments ─────────────── */
+    .btn-primary { background: var(--primary); border-color: var(--primary); }
+    .btn-primary:hover { background: #1e40af; border-color: #1e40af; }
+    .btn-outline-primary { color: var(--primary); border-color: var(--primary); }
+    .btn-outline-primary:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+    /* Bootstrap code annotation */
+    .annotation {
+      background: #0f172a;
+      color: #94a3b8;
+      font-size: 0.72rem;
+      font-family: 'Courier New', monospace;
+      line-height: 1.8;
+      padding: 1.25rem 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin-top: 3rem;
+    }
+    .annotation .c-cls { color: #7ecfff; }
+    .annotation .c-val { color: #b5f0a0; }
+    .annotation .c-cm  { color: #475569; }
+
+    
+  </style>
+</head>
+<body>
+
+  <!-- ═══ NAVBAR (Bootstrap: navbar, navbar-expand-lg, collapse) ═══ -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">Prism</a>
+
+      <!-- Hamburger toggle — works out of the box with Bootstrap JS -->
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse" data-bs-target="#mainNav"
+              aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-center gap-2">
+          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Docs</a></li>
+          <li class="nav-item">
+            <a class="btn btn-primary btn-nav" href="#">Get started</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO (Bootstrap: row, col-lg-*, d-flex, align-items-center) ═══ -->
+  <section class="hero">
+    <div class="container">
+      <div class="row align-items-center g-5">
+
+        <!-- Text column — 6 of 12 on large screens, full on mobile -->
+        <div class="col-lg-6">
+          <div class="hero-eyebrow">
+            <i class="bi bi-stars"></i>
+            Bootstrap live demo page
+          </div>
+          <h1>Build products at <em>Super Fast speed</em></h1>
+          <p class="lead">
+            Prism gives your team a unified platform for design, code, and deployment —
+            with AI assistance built in from the ground up.
+          </p>
+          <div class="hero-actions">
+            <a href="#" class="btn btn-primary px-4">Start for free</a>
+            <a href="#" class="btn btn-outline-secondary px-4">Watch demo</a>
+          </div>
+
+          <!-- Bootstrap badges -->
+          <div class="mt-4 d-flex flex-wrap gap-2">
+            <span class="badge bg-light text-dark border">
+              <i class="bi bi-check-circle-fill text-success me-1"></i>
+              No credit card
+            </span>
+            <span class="badge bg-light text-dark border">
+              <i class="bi bi-shield-check-fill text-primary me-1"></i>
+              SOC 2 certified
+            </span>
+            <span class="badge bg-light text-dark border">
+              <i class="bi bi-arrow-repeat text-warning me-1"></i>
+              Free migrations
+            </span>
+          </div>
+        </div>
+
+        <!-- Image/placeholder column -->
+        <div class="col-lg-6">
+          <div class="hero-image-area">
+            <i class="bi bi-grid-1x2"></i>
+            <span>Product screenshot / illustration</span>
+            <span class="text-muted" style="font-size:0.7rem;">col-lg-6 → full width on mobile</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STATS (Bootstrap: row, col-6, col-md-3, text-center) ═══ -->
+  <section class="stats-strip">
+    <div class="container">
+      <div class="row">
+        <div class="col-6 col-md-3 stat-item">
+          <div class="num">40k+</div><div class="lbl">Teams worldwide</div>
+        </div>
+        <div class="col-6 col-md-3 stat-item">
+          <div class="num">99.9%</div><div class="lbl">Uptime SLA</div>
+        </div>
+        <div class="col-6 col-md-3 stat-item">
+          <div class="num">2.4s</div><div class="lbl">Avg deploy time</div>
+        </div>
+        <div class="col-6 col-md-3 stat-item">
+          <div class="num">5★</div><div class="lbl">G2 rating</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FEATURES (Bootstrap: row, col-md-6, col-lg-4, g-4) ═══ -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Features</p>
+        <h2>Everything your team needs</h2>
+      </div>
+
+      <!-- 3-column grid on lg, 2-col on md, 1-col on mobile -->
+      <div class="row g-4">
+
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+            <h5>Instant previews</h5>
+            <p>See every change live as you type. Hot-reload is built into the editor so there's zero wait time between edit and result.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-shield-lock-fill"></i></div>
+            <h5>Zero-trust security</h5>
+            <p>End-to-end encryption, fine-grained RBAC, and audit logs give your security team full visibility and control.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-diagram-3-fill"></i></div>
+            <h5>Smart pipelines</h5>
+            <p>Drag-and-drop CI/CD pipelines that auto-detect your stack and configure sensible defaults without any YAML.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-cpu-fill"></i></div>
+            <h5>AI code review</h5>
+            <p>Automated PR reviews that catch bugs, suggest improvements, and enforce team conventions — before a human ever looks.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-bar-chart-fill"></i></div>
+            <h5>Usage analytics</h5>
+            <p>Real-time dashboards for deployment frequency, error rates, and team velocity — all in one place.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-plug-fill"></i></div>
+            <h5>300+ integrations</h5>
+            <p>Connect GitHub, Slack, Jira, Datadog, and hundreds more with single-click OAuth — no API keys to manage.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PRICING (Bootstrap: row, col-md-4, position-relative) ═══ -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-header text-center">
+        <p class="eyebrow">Pricing</p>
+        <h2>Simple, transparent plans</h2>
+      </div>
+
+      <div class="row g-4 justify-content-center">
+
+        <div class="col-md-4">
+          <div class="price-card">
+            <p class="price-name">Starter</p>
+            <div class="price-amount">$0 <span class="price-period">/ mo</span></div>
+            <ul class="price-features">
+              <li><i class="bi bi-check-lg"></i>3 projects</li>
+              <li><i class="bi bi-check-lg"></i>5 GB storage</li>
+              <li><i class="bi bi-check-lg"></i>Community support</li>
+              <li><i class="bi bi-x-lg text-muted"></i><span class="text-muted">Custom domains</span></li>
+            </ul>
+            <a href="#" class="btn btn-outline-primary w-100">Get started</a>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="price-card featured">
+            <div class="price-badge">Most popular</div>
+            <p class="price-name">Pro</p>
+            <div class="price-amount">$29 <span class="price-period">/ mo</span></div>
+            <ul class="price-features">
+              <li><i class="bi bi-check-lg"></i>Unlimited projects</li>
+              <li><i class="bi bi-check-lg"></i>100 GB storage</li>
+              <li><i class="bi bi-check-lg"></i>Priority support</li>
+              <li><i class="bi bi-check-lg"></i>Custom domains</li>
+            </ul>
+            <a href="#" class="btn btn-primary w-100">Start free trial</a>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="price-card">
+            <p class="price-name">Enterprise</p>
+            <div class="price-amount" style="font-size:1.8rem;">Custom</div>
+            <ul class="price-features">
+              <li><i class="bi bi-check-lg"></i>Everything in Pro</li>
+              <li><i class="bi bi-check-lg"></i>SSO / SAML</li>
+              <li><i class="bi bi-check-lg"></i>SLA guarantee</li>
+              <li><i class="bi bi-check-lg"></i>Dedicated engineer</li>
+            </ul>
+            <a href="#" class="btn btn-outline-secondary w-100">Contact sales</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bootstrap alert component -->
+      <div class="alert alert-info mt-4 d-flex align-items-center gap-2" role="alert">
+        <i class="bi bi-info-circle-fill"></i>
+        All plans include a <strong>14-day free trial</strong>. No credit card required.
+      </div>
+
+      <!-- Grid annotation -->
+      <div class="annotation">
+<span class="c-cm">/* Bootstrap Grid — 3 equal columns */</span>
+&lt;div class="<span class="c-cls">row g-4 justify-content-center</span>"&gt;
+  &lt;div class="<span class="c-cls">col-md-4</span>"&gt;  <span class="c-cm">← 4/12 cols on md+, full on mobile</span>
+    ...Starter card...
+  &lt;/div&gt;
+  &lt;div class="<span class="c-cls">col-md-4</span>"&gt;
+    ...Pro card (featured)...
+  &lt;/div&gt;
+  &lt;div class="<span class="c-cls">col-md-4</span>"&gt;
+    ...Enterprise card...
+  &lt;/div&gt;
+&lt;/div&gt;
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="container d-flex flex-wrap justify-content-between align-items-center">
+      <span class="navbar-brand mb-0" style="font-family:'Lora',serif;font-style:italic;">Prism</span>
+      <span>Bootstrap 5 Live demo</span>
+      <div class="d-flex gap-3">
+        <a href="#" class="text-muted text-decoration-none">Privacy</a>
+        <a href="#" class="text-muted text-decoration-none">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 JS bundle (includes Popper) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
