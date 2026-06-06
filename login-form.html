@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HTML Example – Login Form with Validation</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,400;0,600;1,400&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:    #1a1714;
+      --paper:  #ffffff;
+      --accent: #c0392b;
+      --muted:  #7a7370;
+      --border: #cdc9c1;
+      --green:  #2d6a4f;
+      --err-bg: #fff0ef;
+    }
+
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink); /* FIX 1: was var(--black), which was never defined */
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2.5rem 2.25rem;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .field {
+      margin-bottom: 1.4rem;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem;
+      background: var(--paper);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus { border-color: var(--ink); }
+    input.invalid { border-color: var(--accent); background: var(--err-bg); }
+    input.valid   { border-color: var(--green); }
+
+    .error-msg {
+      display: none;
+      font-size: 0.72rem;
+      color: var(--accent);
+      margin-top: 0.35rem;
+    }
+
+    .field.has-error .error-msg { display: block; }
+
+    .strength-bar {
+      display: none;
+      margin-top: 0.5rem;
+    }
+
+    .strength-bar.visible { display: block; }
+
+    .strength-track {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .strength-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 2px;
+      transition: width 0.3s, background 0.3s;
+    }
+
+    .strength-label {
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    .toggle-pw {
+      position: absolute;
+      right: 0.75rem;
+      top: 2.05rem;
+      cursor: pointer;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    .toggle-pw:hover { color: var(--ink); }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .checkbox-row input[type="checkbox"] { accent-color: var(--ink); }
+    .checkbox-row label { text-transform: none; letter-spacing: 0; font-size: 0.8rem; margin: 0; }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      border-radius: 3px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    button[type="submit"]:hover  { background: #2e2a26; }
+    button[type="submit"]:active { transform: scale(0.98); }
+
+    .success-banner {
+      display: none;
+      background: #cfd4d1;
+      border: 1px solid #a8d5bb;
+      border-radius: 3px;
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      color: var(--green);
+      text-align: center;
+      margin-top: 1.25rem;
+    }
+
+    .success-banner.visible { display: block; }
+  </style>
+</head>
+<body>
+
+  <p class="section-label">HTML DEMO Page</p>
+  <h1>Login Form</h1>
+  <p class="subtitle">Front-end validation only · no server required</p>
+
+  <div class="card">
+    <!-- FIX 2: Wrapped fields in a <form> element for correct semantics,
+         accessibility, and Enter-key submission support. -->
+    <form onsubmit="return false;">
+      <div class="field" id="field-email">
+        <label for="email">Email address</label>
+        <input type="email" id="email" placeholder="rajanmandal1232@example.com" autocomplete="username" />
+        <span class="error-msg" id="err-email">Enter a valid email address.</span>
+      </div>
+
+      <div class="field" id="field-password">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="min 8 characters" autocomplete="current-password" />
+        <span class="toggle-pw" id="toggle-pw">show</span>
+        <span class="error-msg" id="err-password">Password must be at least 8 characters.</span>
+        <div class="strength-bar" id="strength-bar">
+          <div class="strength-track">
+            <div class="strength-fill" id="strength-fill"></div>
+          </div>
+          <p class="strength-label" id="strength-label">Strength: —</p>
+        </div>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="remember" />
+        <label for="remember">Remember me</label>
+      </div>
+
+      <button type="submit" id="login-btn">Sign in →</button>
+      <div class="success-banner" id="success">✓ Validated — would submit to server here.</div>
+    </form>
+    <!-- FIX 3: Removed empty, unused <div class="code-note"> block. -->
+  </div>
+
+  <script>
+    const emailEl    = document.getElementById('email');
+    const passwordEl = document.getElementById('password');
+    const fieldEmail = document.getElementById('field-email');
+    const fieldPw    = document.getElementById('field-password');
+    const togglePw   = document.getElementById('toggle-pw');
+    const strengthBar= document.getElementById('strength-bar');
+    const fill       = document.getElementById('strength-fill');
+    const fillLabel  = document.getElementById('strength-label');
+    const btn        = document.getElementById('login-btn');
+    const success    = document.getElementById('success');
+
+    function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+    function getStrength(pw) {
+      let s = 0;
+      if (pw.length >= 8)           s++;
+      if (/[A-Z]/.test(pw))         s++;
+      if (/[0-9]/.test(pw))         s++;
+      if (/[^A-Za-z0-9]/.test(pw))  s++;
+      return s;
+    }
+
+    emailEl.addEventListener('blur', () => {
+      const ok = validateEmail(emailEl.value.trim());
+      fieldEmail.classList.toggle('has-error', !ok && emailEl.value.length > 0);
+      emailEl.classList.toggle('invalid', !ok && emailEl.value.length > 0);
+      emailEl.classList.toggle('valid', ok);
+    });
+
+    passwordEl.addEventListener('input', () => {
+      const pw = passwordEl.value;
+      strengthBar.classList.toggle('visible', pw.length > 0);
+
+      const s = getStrength(pw);
+      const pct = (s / 4) * 100;
+      fill.style.width = pct + '%';
+      const colors = ['#e74c3c','#e67e22','#f1c40f','#2d6a4f'];
+      const labels = ['Weak','Fair','Good','Strong'];
+      fill.style.background = pw.length ? colors[Math.max(s-1,0)] : '#ccc';
+      fillLabel.textContent = pw.length ? 'Strength: ' + labels[Math.max(s-1,0)] : 'Strength: —';
+
+      const ok = pw.length >= 8;
+      passwordEl.classList.toggle('invalid', !ok && pw.length > 0);
+      passwordEl.classList.toggle('valid', ok);
+      fieldPw.classList.toggle('has-error', !ok && pw.length > 0);
+    });
+
+    togglePw.addEventListener('click', () => {
+      const show = passwordEl.type === 'password';
+      passwordEl.type = show ? 'text' : 'password';
+      togglePw.textContent = show ? 'hide' : 'show';
+    });
+
+    btn.addEventListener('click', () => {
+      const emailOk = validateEmail(emailEl.value.trim());
+      const pwOk    = passwordEl.value.length >= 8;
+
+      fieldEmail.classList.toggle('has-error', !emailOk);
+      emailEl.classList.toggle('invalid', !emailOk);
+      fieldPw.classList.toggle('has-error', !pwOk);
+      passwordEl.classList.toggle('invalid', !pwOk);
+
+      if (emailOk && pwOk) {
+        success.classList.add('visible');
+        btn.textContent = '✓ Signed in';
+        btn.style.background = '#2d6a4f';
+      }
+    });
+  </script>
+
+</body>
+</html>
