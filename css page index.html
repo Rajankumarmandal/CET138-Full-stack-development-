@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CSS Example – Responsive Design &amp; Animations</title>
+  <style>
+    /* Fix 1: Import all fonts actually used — added Syne (used for headings/labels),
+              kept Space Mono (code blocks). Removed 'Inter' fallback since it was
+              imported but never declared in @import. Body now uses Syne + system stack. */
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #1a3b42;
+      --surface: #1c2b2c66;
+      --line:    #807e7e40;
+      --text:    #fafafa;
+      --muted:   #ffffff;
+      /* Fix 2: Renamed --amber to --teal (its actual colour) to resolve the
+                naming mismatch. --accent-warm keeps the orange used in shimmer. */
+      --teal:        #0d767f;
+      --accent-warm: #c8780e;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      /* Fix 3: Use the imported Syne font family for the body instead of
+                'Inter' which was referenced but never imported. */
+      font-family: 'Syne', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── page layout ───────────────────────── */
+
+    .page-header {
+      padding: 3rem 2rem 1.5rem;
+      border-bottom: 5px solid var(--line);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .tag {
+      font-size: 1rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--text);
+    }
+
+    /* Fix 4: Updated span colour reference from var(--amber) → var(--teal) */
+    .page-header h1 span { color: var(--teal); }
+
+    .page-header p {
+      margin-top: 0.6rem;
+      font-size: .78rem;
+      color: var(--muted);
+      /* Fix 5: line-height: 10 was absurdly large (10× font size), corrected to 1.6 */
+      line-height: 1.6;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
+    }
+
+    /* ── section wrapper ──────────────────── */
+
+    .demo-block { }
+
+    .demo-label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      /* Fix 6: colour was #000000 (pure black) — invisible on the dark background.
+                Changed to var(--text) so the label is actually readable. */
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+
+    .demo-desc {
+      font-size: 0.78rem;
+      line-height: 1.65;
+      margin-bottom: 1.25rem;
+      max-width: 520px;
+    }
+
+    /* ══════════════════════════════════════════
+       DEMO 1 — Responsive grid
+    ══════════════════════════════════════════ */
+
+    .grid-demo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--line);
+    }
+
+    .grid-cell {
+      padding: 1.5rem 1rem;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .grid-cell:hover { background: #13394488; }
+
+    .grid-cell .num {
+      /* Fix 7: 'roboto' was not imported and casing was inconsistent across the file.
+                Replaced with 'Space Mono' which IS imported and suits numeric display. */
+      font-family: 'Space Mono', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--teal);
+      line-height: 1;
+    }
+
+    .grid-cell .lbl {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════════════════
+       DEMO 2 — Hover transition card
+    ══════════════════════════════════════════ */
+
+    .transition-card {
+      border: 1px solid var(--line);
+      padding: 2rem;
+      background: var(--surface);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition:
+        background   0.35s ease,
+        border-color 0.35s ease,
+        transform    0.25s ease;
+    }
+
+    .transition-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--teal);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s ease;
+    }
+
+    .transition-card:hover {
+      background: #13394488;
+      border-color: var(--teal);
+      transform: translateY(-3px);
+    }
+
+    .transition-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .transition-card h3 {
+      /* Fix 8: Same 'roboto' issue — swapped to 'Syne' (imported, used for headings) */
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s;
+    }
+
+    .transition-card:hover h3 { color: var(--teal); }
+
+    .transition-card p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      border: 1px solid var(--teal);
+      padding: 0.2rem 0.55rem;
+      border-radius: 2px;
+      margin-bottom: 0.75rem;
+      /* Fix 9: Added border-color to the transition so border and text animate together */
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    /* Fix 10: Badge hover state was changing text color but leaving border behind.
+               Now both text and border shift consistently to --teal. */
+    .transition-card:hover .badge {
+      color: var(--teal);
+      border-color: var(--teal);
+    }
+
+    /* ══════════════════════════════════════════
+       DEMO 3 — CSS Keyframe animation
+    ══════════════════════════════════════════ */
+
+    .anim-demo {
+      border: 1px solid var(--line);
+      padding: 2rem 2rem 2.5rem;
+      background: var(--surface);
+    }
+
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(101, 141, 151, 0.55); }
+      70%  { box-shadow: 0 0 0 18px rgba(232,160,32,0); }
+      100% { box-shadow: 0 0 0 0 rgba(24, 23, 23, 0.058); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-10px); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position:  400px 0; }
+    }
+
+    .anim-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 1.25rem;
+      align-items: center;
+    }
+
+    .anim-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1 1 130px;
+    }
+
+    .anim-item .cap {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      /* Fix 11: Hardcoded 'white' replaced with CSS variable for consistency */
+      color: var(--text);
+    }
+
+    .orb {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--teal);
+      animation: pulse-ring 2s ease-out infinite;
+    }
+
+    .floater {
+      width: 48px; height: 48px;
+      background: transparent;
+      border: 2px solid var(--teal);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .spinner {
+      width: 44px; height: 44px;
+      border: 3px solid var(--line);
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    .shimmer-text {
+      /* Fix 12: Same 'roboto' font issue — replaced with 'Syne' */
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      background: linear-gradient(
+        90deg,
+        var(--muted) 0%,
+        var(--accent-warm) 40%,
+        var(--teal)        50%,
+        var(--accent-warm) 60%,
+        var(--muted) 100%
+      );
+      background-size: 400px 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 2.5s linear infinite;
+    }
+
+    /* ══════════════════════════════════════════
+       DEMO 4 — Media query annotation
+    ══════════════════════════════════════════ */
+
+    .mq-legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--line);
+      font-size: 0.75rem;
+    }
+
+    .mq-row {
+      padding: 0.85rem 1rem;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .mq-bp {
+      font-weight: 700;
+      color: var(--teal);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .mq-desc { color: var(--muted); font-size: 0.7rem; }
+
+    .resize-indicator {
+      margin-top: 1.25rem;
+      border: 1px solid var(--line);
+      padding: 1rem 1.25rem;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .ri-label { font-size: 0.72rem; color: var(--muted); flex-shrink: 0; }
+    .ri-value {
+      /* Fix 13: 'roboto' replaced with 'Space Mono' for numeric display */
+      font-family: 'Space Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--teal);
+    }
+    .ri-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+    .ri-fill {
+      height: 100%;
+      background: var(--teal);
+      transition: width 0.1s;
+    }
+
+    /* ── code callout block ──────────────────── */
+    .code-block {
+      background: #0b2c34;
+      border: 1px solid var(--line);
+      padding: 1.25rem 1.5rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 1.8;
+      color: #fb9c04;
+      overflow-x: auto;
+    }
+
+    /* Fix 14: .c-prop was #0668a1 (dark blue) — almost invisible on the dark
+               code-block background. Raised to a lighter, readable cyan. */
+    .c-prop { color: #5cc8e8; }
+    .c-val  { color: #b5f0a0; }
+    .c-cm   { color: #4a4a4a; }
+    .c-kw   { color: #f7a8a8; }
+    .c-sel  { color: rgb(247, 0, 0); }
+
+    /* ── responsive breakpoints ─────────────── */
+    @media (max-width: 600px) {
+      .page-header,
+      main { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .anim-grid { gap: 1.25rem; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <p class="tag"> CSS demo page </p>
+    <h1>Responsive Design<br/>&amp; <span>Animations</span></h1>
+    <p>Live demos of CSS grid, transitions, keyframes, and media queries.</p>
+  </header>
+
+  <main>
+
+    <!-- DEMO 1: Responsive grid -->
+    <section class="demo-block">
+      <p class="demo-label">Demo 1 — Fluid Grid Layout</p>
+      <p class="demo-desc">
+        <code>auto-fit</code> + <code>minmax(160px, 1fr)</code> lets columns reflow automatically.
+        Resize the browser window to see cards rearrange without a single media query.
+      </p>
+      <div class="grid-demo">
+        <div class="grid-cell"><span class="num">12</span><span class="lbl">Columns at lg</span></div>
+        <div class="grid-cell"><span class="num">6</span><span class="lbl">At medium</span></div>
+        <div class="grid-cell"><span class="num">4</span><span class="lbl">At small</span></div>
+        <div class="grid-cell"><span class="num">1</span><span class="lbl">At mobile</span></div>
+      </div>
+      <div class="code-block" style="margin-top:1px;">
+<span class="c-sel">.grid</span> {
+  <span class="c-prop">display</span>: <span class="c-val">grid</span>;
+  <span class="c-prop">grid-template-columns</span>: <span class="c-val">repeat(auto-fit, minmax(160px, 1fr))</span>;
+  <span class="c-prop">gap</span>: <span class="c-val">1px</span>; <span class="c-cm">/* gap becomes visible border */</span>
+}
+      </div>
+    </section>
+
+    <!-- DEMO 2: Hover transitions -->
+    <section class="demo-block">
+      <p class="demo-label">Demo 2 — Hover Transitions</p>
+      <p class="demo-desc">
+        CSS <code>transition</code> interpolates between property values. Hover the card to see
+        background colour, border, transform, and a pseudo-element animate simultaneously.
+      </p>
+      <div class="transition-card">
+        <span class="badge">Hover me</span>
+        <h3>Smooth Transitions</h3>
+        <p>
+          Four properties change at once: background, border-color, translateY, and the
+          ::before scaleX — all driven by a single hover rule and transition shorthand.
+        </p>
+      </div>
+      <div class="code-block" style="margin-top:1px;">
+<span class="c-sel">.card</span> {
+  <span class="c-prop">transition</span>: <span class="c-val">background 0.35s ease,
+              border-color 0.35s ease,
+              transform 0.25s ease</span>;
+}
+<span class="c-sel">.card::before</span> { <span class="c-cm">/* top accent bar */</span>
+  <span class="c-prop">transform</span>: <span class="c-val">scaleX(0)</span>;
+  <span class="c-prop">transition</span>: <span class="c-val">transform 0.35s ease</span>;
+}
+<span class="c-sel">.card:hover::before</span> { <span class="c-prop">transform</span>: <span class="c-val">scaleX(1)</span>; }
+      </div>
+    </section>
+
+    <!-- DEMO 3: Keyframe animations -->
+    <section class="demo-block">
+      <p class="demo-label">Demo 3 — @keyframe Animations</p>
+      <p class="demo-desc">
+        Keyframe rules describe intermediate steps. The browser interpolates the rest.
+        Each element below uses a different named animation.
+      </p>
+      <div class="anim-demo">
+        <div class="anim-grid">
+          <div class="anim-item">
+            <div class="orb"></div>
+            <span class="cap">Pulse ring</span>
+          </div>
+          <div class="anim-item">
+            <div class="floater"></div>
+            <span class="cap">Float drift</span>
+          </div>
+          <div class="anim-item">
+            <div class="spinner"></div>
+            <span class="cap">Spin loader</span>
+          </div>
+          <div class="anim-item">
+            <div class="shimmer-text">CSS</div>
+            <span class="cap">Shimmer text</span>
+          </div>
+        </div>
+      </div>
+      <div class="code-block" style="margin-top:1px;">
+<span class="c-kw">@keyframes</span> <span class="c-sel">float</span> {
+  <span class="c-prop">0%, 100%</span> { <span class="c-prop">transform</span>: <span class="c-val">translateY(0)</span>; }
+  <span class="c-prop">50%</span>       { <span class="c-prop">transform</span>: <span class="c-val">translateY(-10px)</span>; }
+}
+
+<span class="c-sel">.floater</span> {
+  <span class="c-prop">animation</span>: <span class="c-val">float 3s ease-in-out infinite</span>;
+}
+      </div>
+    </section>
+
+    <!-- DEMO 4: Media query -->
+    <section class="demo-block">
+      <p class="demo-label">Demo 4 — Media Query Breakpoints</p>
+      <p class="demo-desc">
+        Media queries apply rules only when conditions match.
+        The bar below shows your current viewport width in real time.
+      </p>
+      <div class="mq-legend">
+        <div class="mq-row"><span class="mq-bp">&lt; 480px</span><span class="mq-desc">xs — single column stack</span></div>
+        <div class="mq-row"><span class="mq-bp">481 – 768px</span><span class="mq-desc">sm — 2-col grid</span></div>
+        <div class="mq-row"><span class="mq-bp">769 – 1024px</span><span class="mq-desc">md — 3-col grid</span></div>
+        <div class="mq-row"><span class="mq-bp">1025px+</span><span class="mq-desc">lg — full layout</span></div>
+      </div>
+      <div class="resize-indicator">
+        <span class="ri-label">Viewport width:</span>
+        <span class="ri-value" id="vw-val">—</span>
+        <div class="ri-bar"><div class="ri-fill" id="ri-fill"></div></div>
+      </div>
+      <div class="code-block" style="margin-top:1px;">
+<span class="c-kw">@media</span> (<span class="c-prop">max-width</span>: <span class="c-val">600px</span>) {
+  <span class="c-sel">.grid</span> {
+    <span class="c-prop">grid-template-columns</span>: <span class="c-val">1fr</span>; <span class="c-cm">/* single column */</span>
+  }
+}
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const vwVal  = document.getElementById('vw-val');
+    const riFill = document.getElementById('ri-fill');
+
+    function updateVW() {
+      const w = window.innerWidth;
+      vwVal.textContent = w + 'px';
+      // cap the bar at 1400 px for visual clarity
+      riFill.style.width = Math.min(w / 1400 * 100, 100) + '%';
+    }
+
+    updateVW();
+    window.addEventListener('resize', updateVW);
+  </script>
+
+</body>
+</html>
