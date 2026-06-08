@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JavaScript Example – Interactive Elements</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #fafaf8;
+      --surface: #ffffff;
+      --ink:     #18181b;
+      --muted:   #71717a;
+      --border:  #e4e4e7;
+      --teal:    #0d9488;
+      --teal-lt: #f0fdfa;
+      --rose:    #e11d48;
+      --rose-lt: #fff1f2;
+      --amber:   #d97706;
+      --amber-lt:#fffbeb;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── page header ─────────────────────── */
+    .page-top {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 3.5rem 2rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    h1 em { color: var(--teal); font-style: italic; }
+
+    .sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; line-height: 1.6; }
+
+    /* ── demo layout ─────────────────────── */
+    .demos {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .demo-block { }
+
+    .demo-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .demo-num {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--teal);
+      flex-shrink: 0;
+    }
+
+    .demo-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .demo-desc {
+      font-size: 0.76rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 1.25rem;
+      max-width: 500px;
+    }
+
+    /* ── card wrapper ─────────────────────── */
+    .card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .card-body { padding: 2rem; }
+
+    /* ── code annotation ─────────────────── */
+    .code-snip {
+      background: #18181b;
+      color: #a1a1aa;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 1.8;
+      padding: 1.25rem 1.5rem;
+      border-top: 1px solid #27272a;
+      overflow-x: auto;
+    }
+
+    .kw  { color: #f87171; }
+    .fn  { color: #7dd3fc; }
+    .str { color: #86efac; }
+    .cm  { color: #52525b; }
+    .num { color: #fbbf24; }
+
+    /* ═══════════════════════════════════
+       DEMO 1 — Click counter / message
+    ═══════════════════════════════════ */
+    .click-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 2.5rem;
+      text-align: center;
+    }
+
+    #click-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      padding: 0.75rem 2rem;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.05em;
+    }
+
+    #click-btn:hover { background: #0f766e; }
+    #click-btn:active { transform: scale(0.96); }
+
+    .click-counter {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--teal);
+      line-height: 1;
+      transition: color 0.3s;
+    }
+
+    .click-message {
+      font-size: 0.8rem;
+      color: var(--muted);
+      min-height: 1.2em;
+      transition: opacity 0.4s;
+    }
+
+    .confetti {
+      display: flex;
+      gap: 4px;
+      font-size: 1.1rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .confetti.show { opacity: 1; }
+
+    /* ═══════════════════════════════════
+       DEMO 2 — Countdown timer
+    ═══════════════════════════════════ */
+    .timer-display {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 0.25rem;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      padding: 2rem 2rem 1.5rem;
+      color: var(--ink);
+      transition: color 0.4s;
+    }
+
+    .timer-display.warning { color: var(--amber); }
+    .timer-display.danger  { color: var(--rose); }
+
+    .timer-sep {
+      color: var(--muted);
+      margin: 0 0.15rem;
+      font-size: 0.7em;
+      align-self: center;
+    }
+
+    .timer-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding: 0 2rem 2rem;
+      justify-content: center;
+    }
+
+    .timer-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      transition: background 0.15s, border-color 0.15s;
+      letter-spacing: 0.04em;
+    }
+
+    .timer-btn:hover { background: var(--bg); border-color: #a1a1aa; }
+    .timer-btn.primary { background: var(--teal); color: #fff; border-color: var(--teal); }
+    .timer-btn.primary:hover { background: #0f766e; }
+    .timer-btn.danger  { color: var(--rose); border-color: var(--rose); }
+    .timer-btn.danger:hover  { background: var(--rose-lt); }
+
+    .timer-presets {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0 2rem;
+      padding-bottom: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .preset-btn:hover {
+      background: var(--teal-lt);
+      color: var(--teal);
+      border-color: var(--teal);
+    }
+
+    .timer-progress {
+      height: 4px;
+      background: var(--border);
+      margin: 0;
+    }
+
+    .timer-progress-fill {
+      height: 100%;
+      background: var(--teal);
+      transition: width 1s linear, background 0.4s;
+      width: 100%;
+    }
+
+    .timer-progress-fill.warning { background: var(--amber); }
+    .timer-progress-fill.danger  { background: var(--rose); }
+
+    .timer-status {
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+      padding: 0.5rem 2rem 0;
+      min-height: 1.5em;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ═══════════════════════════════════
+       DEMO 3 — DOM toggle / accordion
+    ═══════════════════════════════════ */
+    .accordion-item {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .accordion-item:last-child { border-bottom: none; }
+
+    .accordion-trigger {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 1.1rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--ink);
+      transition: background 0.15s;
+    }
+
+    .accordion-trigger:hover { background: var(--bg); }
+
+    .accordion-icon {
+      font-size: 1rem;
+      color: var(--muted);
+      transition: transform 0.25s;
+    }
+
+    .accordion-trigger[aria-expanded="true"] .accordion-icon {
+      transform: rotate(45deg);
+      color: var(--teal);
+    }
+
+    .accordion-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.7;
+      padding: 0 1.5rem;
+    }
+
+    .accordion-panel.open {
+      max-height: 200px;
+      padding: 0 1.5rem 1.1rem;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="page-top">
+    <p class="eyebrow">JavaScript Live Demo Page </p>
+    <h1>Interactive <em>Elements</em></h1>
+    <p class="sub">Three self-contained demos showing DOM manipulation, timers, and state.</p>
+  </div>
+
+  <div class="demos">
+
+    <!-- ═══ DEMO 1: Click counter ═══ -->
+    <section class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 01</span>
+        <span class="demo-title">Click counter with milestone messages</span>
+      </div>
+      <p class="demo-desc">
+        Every click increments a counter. JS checks for milestones and updates the
+        message — a simple pattern for event-driven UI.
+      </p>
+      <div class="card">
+        <div class="click-stage">
+          <div class="confetti" id="confetti">✨</div>
+          <div class="click-counter" id="click-count">0</div>
+          <p class="click-message" id="click-msg">Click the button to start</p>
+          <button id="click-btn">Click me →</button>
+          <button id="reset-btn" style="background:none;border:none;font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted);cursor:pointer;letter-spacing:0.08em;text-transform:uppercase;">
+            Reset
+          </button>
+        </div>
+        <div class="code-snip">
+<span class="cm">// Event listener + DOM update</span>
+btn.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () => {
+  count++;
+  countEl.textContent = count;
+
+  <span class="kw">const</span> milestones = {
+    <span class="num">5</span>:  <span class="str">'Getting warmed up!'</span>,
+    <span class="num">10</span>: <span class="str">'Double digits 🎯'</span>,
+    <span class="num">25</span>: <span class="str">'Quarter century! 🏆'</span>,
+  };
+  msgEl.textContent = milestones[count] ?? <span class="str">`${count} clicks`</span>;
+});
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ DEMO 2: Countdown timer ═══ -->
+    <section class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 02</span>
+        <span class="demo-title">Countdown timer with visual state</span>
+      </div>
+      <p class="demo-desc">
+        Uses <code>setInterval</code> to tick every second. Color changes at thresholds.
+        Preset buttons show quick-select UX. All state lives in plain JS variables.
+      </p>
+      <div class="card">
+        <div class="timer-presets">
+          <button class="preset-btn" data-secs="60">1 min</button>
+          <button class="preset-btn" data-secs="120">2 min</button>
+          <button class="preset-btn" data-secs="300">5 min</button>
+          <button class="preset-btn" data-secs="600">10 min</button>
+        </div>
+        <div class="timer-display" id="timer-display">
+          <span id="timer-min">05</span>
+          <span class="timer-sep">:</span>
+          <span id="timer-sec">00</span>
+        </div>
+        <div class="timer-progress">
+          <div class="timer-progress-fill" id="timer-fill"></div>
+        </div>
+        <p class="timer-status" id="timer-status">Ready</p>
+        <div class="timer-controls">
+          <button class="timer-btn primary" id="timer-start">▶ Start</button>
+          <button class="timer-btn" id="timer-pause">⏸ Pause</button>
+          <button class="timer-btn danger" id="timer-reset">↺ Reset</button>
+        </div>
+        <div class="code-snip">
+<span class="cm">// setInterval drives the tick</span>
+<span class="kw">let</span> interval = <span class="kw">null</span>;
+<span class="kw">let</span> remaining = totalSeconds;
+
+<span class="kw">function</span> <span class="fn">startTimer</span>() {
+  interval = <span class="fn">setInterval</span>(() => {
+    remaining--;
+    <span class="fn">render</span>(remaining);
+    <span class="kw">if</span> (remaining <= <span class="num">0</span>) <span class="fn">clearInterval</span>(interval);
+  }, <span class="num">1000</span>);
+}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ DEMO 3: Accordion / DOM toggle ═══ -->
+    <section class="demo-block">
+      <div class="demo-header">
+        <span class="demo-num">Demo 03</span>
+        <span class="demo-title">Accordion — CSS + JS toggling</span>
+      </div>
+      <p class="demo-desc">
+        Clicking a trigger adds/removes a CSS class. CSS <code>max-height</code> transition handles
+        the animation — JS only manages state. Aria attributes keep it accessible.
+      </p>
+      <div class="card">
+        <div id="accordion">
+
+          <div class="accordion-item">
+            <button class="accordion-trigger" aria-expanded="false">
+              What is an event listener?
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-panel">
+              An event listener is a function called when a specific event fires on an element —
+              such as a click, keypress, or scroll. Attach one with      
+              <code>element.addEventListener('event', callback)</code>.
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-trigger" aria-expanded="false">
+              What is the DOM?
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-panel">
+              The Document Object Model (DOM) is a tree-like representation of an HTML page.
+              JavaScript can read or modify any element, attribute, or text through the DOM API
+              using methods like <code>getElementById</code> and <code>querySelector</code>.
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-trigger" aria-expanded="false">
+              How does classList work?
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-panel">
+              <code>classList</code> exposes methods to add, remove, or toggle CSS class names
+              on an element. <code>toggle('open')</code> adds the class if absent and removes it
+              if present — ideal for show/hide patterns like this accordion.
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-trigger" aria-expanded="false">
+              What is closure in JS?
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-panel">
+              A closure is a function that retains access to variables from its outer scope
+              even after that scope has returned. This lets you create private state — for example,
+              each accordion item's handler "remembers" which panel belongs to it.
+            </div>
+          </div>
+
+        </div>
+        <div class="code-snip">
+<span class="cm">// Toggle panel open/closed</span>
+<span class="kw">function</span> <span class="fn">setupAccordion</span>() {
+  triggers.<span class="fn">forEach</span>(btn => {
+    btn.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () => {
+      <span class="kw">const</span> panel = btn.nextElementSibling;
+      <span class="kw">const</span> open  = btn.getAttribute(<span class="str">'aria-expanded'</span>) === <span class="str">'true'</span>;
+
+      btn.<span class="fn">setAttribute</span>(<span class="str">'aria-expanded'</span>, !open);
+      panel.classList.<span class="fn">toggle</span>(<span class="str">'open'</span>, !open);
+    });
+  });
+}
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /demos -->
+
+  <script>
+    /* ────────── DEMO 1: Click Counter ────────── */
+    (function () {
+      const btn       = document.getElementById('click-btn');
+      const resetBtn  = document.getElementById('reset-btn');
+      const countEl   = document.getElementById('click-count');
+      const msgEl     = document.getElementById('click-msg');
+      const confetti  = document.getElementById('confetti');
+      let count = 0;
+
+      const milestones = {
+        1:  'First click! Welcome 👋',
+        5:  'Getting warmed up!',
+        10: 'Double digits 🎯',
+        20: 'Twenty already?!',
+        25: 'Quarter century! 🏆',
+        50: 'FIFTY. Impressive 🔥',
+        100:'Triple digits! Legendary.',
+      };
+
+      function render() {
+        countEl.textContent = count;
+        msgEl.textContent   = milestones[count] ?? (count === 0 ? 'Click the button to start' : `${count} total clicks`);
+
+        // Milestone colours
+        if ([10, 25, 50, 100].includes(count)) {
+          countEl.style.color = '#d97706';
+          confetti.classList.add('show');
+          setTimeout(() => {
+            countEl.style.color = 'var(--teal)';
+            confetti.classList.remove('show');
+          }, 1200);
+        }
+      }
+
+      btn.addEventListener('click', () => { count++; render(); });
+      resetBtn.addEventListener('click', () => { count = 0; render(); });
+    })();
+
+    /* ────────── DEMO 2: Countdown Timer ────────── */
+    (function () {
+      let total     = 300; // default 5 min
+      let remaining = total;
+      let interval  = null;
+      let running   = false;
+
+      const display  = document.getElementById('timer-display');
+      const minEl    = document.getElementById('timer-min');
+      const secEl    = document.getElementById('timer-sec');
+      const fill     = document.getElementById('timer-fill');
+      const status   = document.getElementById('timer-status');
+      const startBtn = document.getElementById('timer-start');
+      const pauseBtn = document.getElementById('timer-pause');
+      const resetBtn = document.getElementById('timer-reset');
+
+      function pad(n) { return String(n).padStart(2, '0'); }
+
+      function render() {
+        const m = Math.floor(remaining / 60);
+        const s = remaining % 60;
+        minEl.textContent = pad(m);
+        secEl.textContent = pad(s);
+
+        const pct = total > 0 ? (remaining / total) * 100 : 0;
+        fill.style.width = pct + '%';
+
+        const cls = remaining <= 10 ? 'danger' : remaining <= 30 ? 'warning' : '';
+        display.className = 'timer-display' + (cls ? ' ' + cls : '');
+        fill.className    = 'timer-progress-fill' + (cls ? ' ' + cls : '');
+      }
+
+      function startTimer() {
+        if (running || remaining <= 0) return;
+        running = true;
+        status.textContent = 'Running…';
+        startBtn.textContent = '▶ Running';
+        interval = setInterval(() => {
+          remaining--;
+          render();
+          if (remaining <= 0) {
+            clearInterval(interval);
+            running = false;
+            status.textContent = '✓ Done!';
+            startBtn.textContent = '▶ Start';
+          }
+        }, 1000);
+      }
+
+      function pauseTimer() {
+        if (!running) return;
+        clearInterval(interval);
+        running = false;
+        status.textContent = 'Paused';
+        startBtn.textContent = '▶ Resume';
+      }
+
+      function resetTimer() {
+        clearInterval(interval);
+        running = false;
+        remaining = total;
+        status.textContent = 'Ready';
+        startBtn.textContent = '▶ Start';
+        render();
+      }
+
+      startBtn.addEventListener('click', startTimer);
+      pauseBtn.addEventListener('click', pauseTimer);
+      resetBtn.addEventListener('click', resetTimer);
+
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          clearInterval(interval);
+          running = false;
+          total = remaining = parseInt(btn.dataset.secs);
+          status.textContent = 'Ready';
+          startBtn.textContent = '▶ Start';
+          render();
+        });
+      });
+
+      render();
+    })();
+
+    /* ────────── DEMO 3: Accordion ────────── */
+    (function () {
+      const triggers = document.querySelectorAll('.accordion-trigger');
+      triggers.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const panel    = btn.nextElementSibling;
+          const isOpen   = btn.getAttribute('aria-expanded') === 'true';
+
+          // Close all others
+          triggers.forEach(other => {
+            if (other !== btn) {
+              other.setAttribute('aria-expanded', 'false');
+              other.nextElementSibling.classList.remove('open');
+            }
+          });
+
+          btn.setAttribute('aria-expanded', String(!isOpen));
+          panel.classList.toggle('open', !isOpen);
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>
